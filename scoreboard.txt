@@ -1,4 +1,3 @@
-Florian|3
-Toto|6
-mlk|8
-Jean|5
+Flo|8
+toto|6
+Abc|3

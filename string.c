@@ -180,3 +180,31 @@ void swap(string *s1, string *s2) {
     *s1 = *s2;
     *s2 = tmp;
 }
+
+/**
+ * Compare la structure string avec une chaine de caractère
+ * @param s1 structure string
+ * @param str2 pointeur de caractère
+*/
+int equals(string s1, char *str2) {
+    int length_str2 = 0;
+    while (str2[length_str2] != '\0')
+    {
+        length_str2++;
+    }
+
+    if (s1.char_length != length_str2)
+        return 0;
+    
+    int i = 0;
+    int same_string = 0;
+
+    while(i < s1.char_length && same_string == 0) {
+        if (s1.str[i] == str2[i]) {
+            same_string = 1;
+        }
+        i++;
+    }
+
+    return same_string;
+}

@@ -72,7 +72,10 @@ int Read_File(char* path, file *file) {
         }
         else {
             // Ajoute une nouvelle ligne dans file avec comme chaine de caractère la variable tmp
-            add_line(file, tmp);
+            if (tmp.char_length != 0) {
+                add_line(file, tmp);
+            }
+
             dump(&tmp); // Vide la variable temporaire
         }
     } while (c != EOF);

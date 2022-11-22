@@ -139,6 +139,7 @@ void printScoreboard() {
 
     int pseudo_length = 0;
     int i = 0;
+
     // Recherche la taille du pseudo qui à le plus de caractère dans les premiers
     while (i < SCOREBOARD_LENGTH && i < scoreboard.length) {
         int len = 0;
@@ -227,10 +228,21 @@ void printWord() {
 // Fonction Hangman
 
 /**
+ * Affiche le nom du jeu en ascii art
+*/
+void printTitle() {
+    printf("  _____  ______ _   _ _____  _    _ \n");
+    printf(" |  __ \\|  ____| \\ | |  __ \\| |  | |\n");
+    printf(" | |__) | |__  |  \\| | |  | | |  | |\n");
+    printf(" |  ___/|  __| | . ` | |  | | |  | |\n");
+    printf(" | |    | |____| |\\  | |__| | |__| |\n");
+    printf(" |_|    |______|_| \\_|_____/ \\____/\n\n");
+}
+
+/**
  * Affiche le pendu en fonction du nombre de tentative
 */
 void printHangman() {
-    system("clear");
     if (attempt_count >= 2) {
         printf("    ____       \n");
         printf("   |    |      \n");
@@ -411,9 +423,12 @@ void game_hangman() {
 
     // Tant qu'on a pas perdu ou gagné
     while(attempt_count < TRIES_MAX && remaining_letters != 0) {
+        system("clear");
+        
+        printTitle();
         printHangman();
 
-        printWord();
+        //printWord();
         printLetters();
         printGuessed();
 

@@ -30,4 +30,6 @@ char* repeatString(char *str, int count);
 
 void swap(string *s1, string *s2);
 
+int equals(string s1, char *str2);
+
 #endif
