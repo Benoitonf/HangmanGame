@@ -11,8 +11,16 @@ void KeyPressed(SDL_KeyboardEvent event) {
     SDL_KeyCode touche = event.keysym.sym;
 
     switch (touche) {
-        // Voir doc SDL_Keycode pour plus de touches https://wiki.libsdl.org/SDL_Keycode
-        // ici exemple ou appuyer sur les touches Q | D modifie x (position du carré dans drawGame())
+        case SDLK_KP_PLUS:
+            if (state < 7)
+                state++;
+            printf("State hangman : %d\n", state);
+            break;
+        case SDLK_KP_MINUS:
+            if (state > 0)
+                state--;
+            printf("State hangman : %d\n", state);
+            break;
         case SDLK_ESCAPE:
             freeAndTerminate();
             break;

@@ -1,33 +1,30 @@
 #include "button.h"
 
 #define KEY_SIZE 50
+#define KEY_SPACE 20
 
 Button keys[26];
 
 void init_buttons() {
-    //space 130 left/right
-    //width 50
-    //space between key 20
     for(int i = 0; i < 26; i++) {
         Button key = {.height = 50, .width = 50, .key_code = 'a' + i, .mouse_over = false, .enable = true};
         
-        key.pos.x = 130 + (key.width + 20) * (i%10);
-        if (i < 10) {
-            key.pos.y = WINDOW_HIGHT - (key.height + 30) * 3;
+        int key_x = 130 + (key.width + 20) * (i%10);
+        if (i >= 20) {
+            key_x += (key.width + 20) * 2;
         }
-        else if (i < 20) {
-            key.pos.y = WINDOW_HIGHT - (key.height + 30) * 2;
-        }
-        else {
-            key.pos.y = WINDOW_HIGHT - (key.height + 30);
-        }
+        key.pos.x = key_x;
+        key.pos.y = WINDOW_HIGHT - (key.height + KEY_SPACE) * (3 - (i/10));
 
         keys[i] = key;
     }
 }
 
 void draw_button(Button key) {
+    char* sprite_name;
+    char* mode;
     if (key.enable) {
+        mode = "Light";
         if (key.mouse_over) {
             changeColor(50,90,140);
         } else {
@@ -35,10 +32,14 @@ void draw_button(Button key) {
         }
     }
     else {
+        mode = "Dark";
         changeColor(80,80,80);
     }
     
-    drawSquare(key.pos.x, key.pos.y, key.height);
+    asprintf(&sprite_name, "./assets/Keys/%s/%c-Key.png",mode, key.key_code - 32);
+    //drawSquare(key.pos.x, key.pos.y, key.height);
+    sprite(key.pos.x, key.pos.y, sprite_name);
+    free(sprite_name);
 
     //printf("%c - x : %3f | y : %3f\n", key.key_code, key.pos.x, key.pos.y);
 }

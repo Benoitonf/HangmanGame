@@ -13,7 +13,7 @@ static char* name = "Pendu";
 void init(int windowWidth, int windowHeight) {
     window_width = windowWidth;
     window_height = windowHeight;
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | IMG_INIT_PNG) != 0) {
         SDL_Log("ERREUR : Init SDL > %s\nParametres passes %d , %d\n",SDL_GetError(), windowWidth, windowHeight);
         freeAndTerminate();
     }
@@ -104,4 +104,40 @@ void drawSquare(int posX, int posY, int longueur)
         SDL_Log("ERREUR : Impossible de creer le carre > %s\nParametres passes %d , %d, %d\n", SDL_GetError(), posX, posY, longueur);
         freeAndTerminate();
     }
+}
+
+void sprite(int posX, int posY, char *imgBMPSrc) {
+    /** @brief affiche un image .bmp sur le renderer
+     *  @param posX position sur l'axe horizontale du coin supérieur gauche de l'image
+     *  @param posY position sur l'axe verticale du coin supérieur gauche de l'image
+     *  @param imgBMPSrc le chemin vers l'image que l'on veut afficher
+     */
+    SDL_Texture *textureImg = NULL;
+    SDL_Surface *surfaceImg = NULL;
+    if (!(surfaceImg = IMG_Load(imgBMPSrc))) {
+        SDL_Log("ERREUR : chargement img > %s\nParametres passes %d , %d, %s\n",SDL_GetError(), posX, posY, imgBMPSrc);
+        freeAndTerminate();
+    }
+    textureImg = SDL_CreateTextureFromSurface(renderer, surfaceImg);
+    SDL_FreeSurface(surfaceImg);
+    if (textureImg == NULL) {
+        SDL_Log("ERREUR : chargement texture > %s\nParametres passes %d , %d, %s\n",SDL_GetError(), posX, posY, imgBMPSrc);
+        freeTexture(textureImg);
+        freeAndTerminate();
+    }
+
+    SDL_Rect rectangle;
+    if (SDL_QueryTexture(textureImg, NULL, NULL, &rectangle.w, &rectangle.h)) {
+        SDL_Log("ERREUR : image : query texture > %s\nParametres passes %d , %d, %s\n",SDL_GetError(), posX, posY, imgBMPSrc);
+        freeTexture(textureImg);
+        freeAndTerminate();
+    }
+    rectangle.x = posX;
+    rectangle.y = posY;
+    if (SDL_RenderCopy(renderer, textureImg, NULL, &rectangle) != 0) {
+        SDL_Log("ERREUR: image : RenderCopy > %s\nParametres passes %d , %d, %s\n",SDL_GetError(), posX, posY, imgBMPSrc);
+        freeTexture(textureImg);
+        freeAndTerminate();
+    }
+    freeTexture(textureImg);
 }

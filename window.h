@@ -7,6 +7,8 @@
 #define WINDOW_WIDTH 980
 #define WINDOW_HIGHT 720
 
+extern int state;
+
 void init_window();
 
 void drawGame();

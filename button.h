@@ -2,6 +2,7 @@
 #define BUTTON_H
 
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "sdl_function.h"
 #include "window.h"
