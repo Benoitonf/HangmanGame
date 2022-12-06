@@ -76,6 +76,8 @@ void Click_Button(int mouse_x, int mouse_y) {
             //printf("Click on %c key\n", keys[i].key_code);
             keys[i].enable = false;
             keys[i].mouse_over = false;
+
+            add_guessed_letter(keys[i].key_code);
         }
     }
 }

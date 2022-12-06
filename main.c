@@ -12,14 +12,14 @@ void KeyPressed(SDL_KeyboardEvent event) {
 
     switch (touche) {
         case SDLK_KP_PLUS:
-            if (state < 7)
-                state++;
-            printf("State hangman : %d\n", state);
+            if (attempt_count < TRIES_MAX)
+                attempt_count++;
+            printf("attempt_count hangman : %d\n", attempt_count);
             break;
         case SDLK_KP_MINUS:
-            if (state > 0)
-                state--;
-            printf("State hangman : %d\n", state);
+            if (attempt_count > 0)
+                attempt_count--;
+            printf("attempt_count hangman : %d\n", attempt_count);
             break;
         case SDLK_ESCAPE:
             freeAndTerminate();
@@ -47,6 +47,8 @@ int main(int argc, char *argv[]) {
     init_buttons();
     init_window();
 
+    initialise_game();
+
     while(programLaunched) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -72,29 +74,6 @@ int main(int argc, char *argv[]) {
         drawGame();
     }
     freeAndTerminate();
-
-    // char choice;
-    // do {
-    //     system("clear");
-    //     printf("Quelle action faire ?\n");
-    //     printf("\t- 1 : Jeu du pendu\n");
-    //     printf("\t- 2 : Voir le TOP %d\n", SCOREBOARD_LENGTH);
-    //     printf("\t- 0 : Exit\n");
-
-    //     choice = GetLetter();
-
-    //     switch(choice) {
-    //         case '1':
-    //             game_hangman();
-    //             break;
-    //         case '2':
-    //             system("clear");
-    //             printScoreboard();
-    //             printf("\nAppuyer sur Entrée pour continuer ...");
-    //             getchar();
-    //             break;
-    //     }
-    // } while(choice != '0');
 
     free_string(&pseudo);
     free_string(&guessed);
