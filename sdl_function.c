@@ -17,6 +17,11 @@ void init(int windowWidth, int windowHeight) {
         SDL_Log("ERREUR : Init SDL > %s\nParametres passes %d , %d\n",SDL_GetError(), windowWidth, windowHeight);
         freeAndTerminate();
     }
+    if (TTF_Init() == -1) {
+        SDL_Log("ERREUR : Init SDL ttf > %s\n", SDL_GetError());
+        freeAndTerminate();
+    }
+
     if (SDL_CreateWindowAndRenderer(windowWidth, windowHeight, 0, &window, &renderer)) {
         SDL_Log("ERREUR : Init window and renderer > %s\nParametres passes %d , %d\n",SDL_GetError(), windowWidth, windowHeight);
         freeAndTerminate();
@@ -140,4 +145,37 @@ void sprite(int posX, int posY, char *imgBMPSrc) {
         freeAndTerminate();
     }
     freeTexture(textureImg);
+}
+
+void write_text(int posX, int posY, char *text) {
+    SDL_Color color = {255,255,255};
+
+    TTF_Font *font = TTF_OpenFont("/home/florian/.local/share/fonts/DroidSansMono.ttf", 150);
+
+    if (font == NULL) {
+        SDL_Log("ERREUR : Chargement de la police.\n");
+        return;
+    }
+
+    SDL_Surface *surface_text = TTF_RenderText_Solid(font, text, color);
+    SDL_Texture *texture_txt = SDL_CreateTextureFromSurface(renderer, surface_text);
+
+    int length_text = 0;
+    while (text[length_text] != '\0')
+        length_text++;
+
+    SDL_Rect rectangle;
+    rectangle.x = posX;
+    rectangle.y = posY;
+    rectangle.h = 40;
+    rectangle.w = 20*length_text;
+
+    if (SDL_RenderCopy(renderer, texture_txt, NULL, &rectangle) != 0) {
+        SDL_Log("ERREUR : texte : RenderCopy > %s\n", SDL_GetError());
+        freeAndTerminate();
+    }
+
+    freeTexture(texture_txt);
+    SDL_FreeSurface(surface_text);
+    TTF_CloseFont(font);
 }
