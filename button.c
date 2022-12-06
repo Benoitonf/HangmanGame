@@ -70,14 +70,29 @@ void Mouse_over_buttons(int mouse_x, int mouse_y) {
     }
 }
 
-void Click_Button(int mouse_x, int mouse_y) {
+void Click_Button(Button* btn) {
+    if (!btn->enable)
+        return;
+    printf("Click on letter %c\n", btn->key_code);
+    add_guessed_letter(btn->key_code);
+
+    btn->enable = false;
+    btn->mouse_over = false;
+}
+
+void Check_Button_Click(int mouse_x, int mouse_y) {
     for(int i = 0; i < 26; i++) {
         if (keys[i].enable && keys[i].mouse_over) {
             //printf("Click on %c key\n", keys[i].key_code);
-            keys[i].enable = false;
-            keys[i].mouse_over = false;
-
-            add_guessed_letter(keys[i].key_code);
+            Click_Button(&keys[i]);
         }
     }
+}
+
+void DisableButton(char letter) {
+    if (letter < 'a' || letter > 'z') {
+        return;
+    }
+
+    Click_Button(&keys[letter - 'a']);
 }
