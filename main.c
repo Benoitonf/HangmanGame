@@ -28,6 +28,12 @@ void KeyPressed(SDL_KeyboardEvent event) {
             break;
     }
 
+    if (touche >= SDLK_a && touche <= SDLK_z) {
+        int num = touche - SDLK_a;
+        char letter = 'a' + num;
+        DisableButton(letter);
+    }
+
 }
 
 int main(int argc, char *argv[]) {
@@ -59,7 +65,7 @@ int main(int argc, char *argv[]) {
                     break;
                 case SDL_MOUSEBUTTONUP:
                     if (event.button.button == SDL_BUTTON_LEFT) {
-                        Click_Button(event.button.x, event.button.y);
+                        Check_Button_Click(event.button.x, event.button.y);
                     }
                     break;
                 case SDL_MOUSEMOTION:
