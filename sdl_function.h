@@ -31,6 +31,6 @@ void drawSquare(int posX, int posY, int longueur);
 
 void sprite(int posX, int posY, char *imgBMPSrc);
 
-void write_text(int posX, int posY, char *text);
+void write_text(int posX, int posY, char *text, int ptsize, SDL_bool is_center);
 
 #endif

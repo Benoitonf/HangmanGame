@@ -8,34 +8,57 @@
 
 #include "file.h"
 #include "string.h"
+#include "window.h"
 
-#define TRIES_MAX 8 // Nombre d'essai max
-#define PATH_WORDS_FILE "words.txt" // Chemin du fichier qui contient les mots
-#define PATH_SCOREBOARD_FILE "scoreboard.txt" // Chemin du fichier qui contient les résultats
-#define SCOREBOARD_LENGTH 10 // Nombre de ligne à afficher dans le tableau des scores
+#define TRIES_MAX 8                             // Nombre d'essai max
+#define PATH_WORDS_FILE "words.txt"             // Chemin du fichier qui contient les mots
+#define PATH_SCOREBOARD_FILE "scoreboard.txt"   // Chemin du fichier qui contient les résultats
+#define SCOREBOARD_LENGTH 10                    // Nombre de ligne à afficher dans le tableau des scores
+#define PSEUDO_LENGTH_MAX 14                    // Taille max du pseudo
+
+typedef enum {
+    MENU_SELECT,
+    ASK_PSEUDO,
+    GAME,
+    RESULT,
+    SCOREBOARD
+} Game_Status_t;
+
+typedef enum {
+    NONE,
+    WIN,
+    LOSE
+} Result_t;
+
+typedef struct {
+    string place_num, nameScore;
+}scoreboard_t;
+
+extern Game_Status_t game_status;
+extern Result_t game_result;
 
 extern string pseudo;
 
 extern file dico;
 extern string word;
-extern int  attempt_count; 
+extern int attempt_count; 
 extern string guessed;
-extern int  remaining_letters;
+extern int remaining_letters;
 extern string letters_guessed;
 
 extern char *hangman_sprite;
+extern file scoreboard_file;
+extern int scoreboard_page;
 
 void init_file(char *path, file *file);
 
 int add_scoreboard(char *pseudo, int score);
 
+char* getPseudo(char *line);
+
 int getScore(char *line);
 
 void Sort_by_score(file *src);
-
-void printScoreboard();
-
-void setPseudo();
 
 void init_word();
 
@@ -49,6 +72,6 @@ void add_guessed_letter(char c);
 
 void initialise_game();
 
-void game_hangman();
+void SetResultGame(Result_t result);
 
 #endif

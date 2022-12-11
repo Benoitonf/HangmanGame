@@ -8,6 +8,8 @@
 #define WINDOW_WIDTH 980
 #define WINDOW_HIGHT 720
 
+extern bool scoreboard_lock;
+
 void init_window();
 
 void drawGame();

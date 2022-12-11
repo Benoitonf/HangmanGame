@@ -1,5 +1,8 @@
 #include "hangman.h"
 
+Game_Status_t game_status;
+Result_t game_result;
+
 string pseudo;
 
 file dico; // File qui contient tous les mots possible à faire deviner
@@ -10,6 +13,8 @@ int  remaining_letters; // Compteur du nombre de lettre qui reste à trouver dan
 string letters_guessed; // string qui contient toutes les lettres déjà utilisées
 
 char *hangman_sprite;
+file scoreboard_file;
+int scoreboard_page = 1;
 
 /**
  * Mets les lignes de texte du fichier dans la structure file
@@ -46,6 +51,23 @@ int add_scoreboard(char *pseudo, int score) {
         printf("Impossible d'écrire\n");
         return -1;
     }
+}
+
+/**
+ * Retourne le pseudo depuis une ligne du fichier scoreboard
+ * @param line une ligne du fichier scoreboard
+*/
+char* getPseudo(char *line) {
+    string pseudo;
+    init_string(&pseudo);
+
+    int i = 0;
+    while(line[i] != '|') {
+        append(&pseudo, line[i]);
+        i++;
+    }
+
+    return pseudo.str;
 }
 
 /**
@@ -86,84 +108,7 @@ void Sort_by_score(file *src) {
     }
 }
 
-/**
- * Affiche les SCOREBOARD_LENGTH premiers scores
-*/
-void printScoreboard() {
-    if (access(PATH_SCOREBOARD_FILE, F_OK) != 0) { // Le fichier n'existe pas
-        printf("Aucun score enregistré.\n");
-        return;
-    }
-
-    file scoreboard;
-    init_file(PATH_SCOREBOARD_FILE, &scoreboard);
-    Sort_by_score(&scoreboard); // Tri le scoreboard
-
-    int pseudo_length = 0;
-    int i = 0;
-
-    // Recherche la taille du pseudo qui à le plus de caractère dans les premiers
-    while (i < SCOREBOARD_LENGTH && i < scoreboard.length) {
-        int len = 0;
-        while(scoreboard.array[i].str[len] != '|') {
-            len++;
-        }
-        if (len > pseudo_length) {
-            pseudo_length = len;
-        }
-        i++;
-    }
-
-    if (pseudo_length < 8)
-        pseudo_length = 8;
-
-    // Créer l'entête du scoreboard à la bonne taille
-    printf("+----+-%s-+-------+\n", repeatCharacter('-', pseudo_length));
-    printf("|    | Pseudo   %s| Score |\n", repeatCharacter(' ', pseudo_length - 8));
-    printf("+----+-%s-+-------+\n", repeatCharacter('-', pseudo_length));
-
-    i = 0;
-    // Parcours les premières lignes du scoreboard trié pour les afficher
-    while(i < SCOREBOARD_LENGTH && i < scoreboard.length) {
-        printf("| %2d | ", i + 1); // Affiche la place
-        int j = 0;
-        while(scoreboard.array[i].str[j] != '|') { // Affiche le pseudo
-            printf("%c", scoreboard.array[i].str[j]);
-            j++;
-        }
-        printf("%s", repeatCharacter(' ', pseudo_length - j)); // Rempli d'espace si le pseudo est trop petit
-        j++; //skip pipe char
-
-        printf(" |   %c   |\n", scoreboard.array[i].str[j]); // Affiche le score
-        i++;
-    }
-    printf("+----+-%s-+-------+\n", repeatCharacter('-', pseudo_length)); // Ferme le scoreboard
-
-    printf("[%d/%d]\n", i, scoreboard.length); // Affiche le nombre de ligne afficher et le nombre de résultat en tout
-}
-
 // End fonction scoreboard
-
-// Fonction Joueur
-
-/**
- * Demande le nom du joueur
-*/
-void setPseudo() {
-    do {
-        system("clear");
-        dump(&pseudo); // Vide la variable si on refait une partie
-        printf("Quel est votre pseudo ? (3 lettres min)\n");
-
-        char letter;
-        while ((letter = getchar()) != '\n') {
-            if (letter != '|') // Ignore le caractère '|' car il sert de séparateur pour le score dans le fichier
-                append(&pseudo, letter);
-        }
-    } while (pseudo.char_length < 3); // Redemande un pseudo s'il y a moins de 3 lettres
-}
-
-// Fin Fonction Joueur
 
 // Fonction Mot à chercher
 
@@ -214,6 +159,7 @@ void add_attempt() {
             break;
         case 8:
             hangman_sprite = "./assets/Hangman/7.png";
+            SetResultGame(LOSE);
             break;
     }
 }
@@ -260,6 +206,10 @@ void add_guessed_letter(char c) {
     if (is_letter_in_word(c) == 0) {
         add_attempt();
     }
+
+    if (remaining_letters == 0) {
+        SetResultGame(WIN);
+    }
 }
 
 // End guesing Fonction
@@ -273,12 +223,17 @@ void initialise_game() {
     init_string(&guessed);
     init_string(&word);
     init_string(&letters_guessed);
-    
-    // Demande le pseudo
-    //setPseudo();
 
     init_word(); // Choisi un mot aléatoirement
     init_guessed(); // Initialise le mot trouvé avec des underscores
 
     attempt_count = 0; // Initialise le nombre d'essai actuel à 0
+
+    game_result = NONE;
+}
+
+void SetResultGame(Result_t result) {
+    game_result = result;
+    add_scoreboard(pseudo.str, attempt_count);
+    scoreboard_lock = false;
 }

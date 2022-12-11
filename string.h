@@ -20,6 +20,8 @@ void append(string *s, char c);
 
 void append_string(string *s, char *string);
 
+void removeAtIndex(string *src, int index);
+
 void insert(string *s, int index, char c);
 
 void copy(string *src, string *dst);

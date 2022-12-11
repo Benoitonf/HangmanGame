@@ -121,6 +121,37 @@ void copy(string *src, string *dst) {
 }
 
 /**
+ * Supprime le charactère à l'indice index dans src
+ * @param src Pointeur du string source
+ * @param index Index où le caractère va être supprimer
+*/
+void removeAtIndex(string *src, int index) {
+    if (src == NULL) {
+        return;
+    }
+
+    if (src->char_length == 0) {
+        return;
+    }
+
+    char *new_str = malloc(sizeof(char) * src->char_length - 1);
+    
+    int j = 0;
+    for(int i = 0; i < src->char_length; i++) {
+        if (i != index) {
+            new_str[j] = src->str[i];
+            j++;
+        }
+    }
+    new_str[src->char_length - 1] = '\0';
+
+    free(src->str);
+    
+    src->char_length = j;
+    src->str = new_str;
+}
+
+/**
  * Retourne n fois la chaine de caractère
  * @param str la chaine de caractère
  * @param count le nombre de fois

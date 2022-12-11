@@ -147,10 +147,10 @@ void sprite(int posX, int posY, char *imgBMPSrc) {
     freeTexture(textureImg);
 }
 
-void write_text(int posX, int posY, char *text) {
+void write_text(int posX, int posY, char *text, int ptsize, SDL_bool is_center) {
     SDL_Color color = {255,255,255};
 
-    TTF_Font *font = TTF_OpenFont("/home/florian/.local/share/fonts/DroidSansMono.ttf", 150);
+    TTF_Font *font = TTF_OpenFont("/home/florian/.local/share/fonts/OpenSans-ExtraBold.ttf", ptsize);
 
     if (font == NULL) {
         SDL_Log("ERREUR : Chargement de la police.\n");
@@ -158,6 +158,7 @@ void write_text(int posX, int posY, char *text) {
     }
 
     SDL_Surface *surface_text = TTF_RenderText_Solid(font, text, color);
+    
     SDL_Texture *texture_txt = SDL_CreateTextureFromSurface(renderer, surface_text);
 
     int length_text = 0;
@@ -165,10 +166,11 @@ void write_text(int posX, int posY, char *text) {
         length_text++;
 
     SDL_Rect rectangle;
-    rectangle.x = posX;
+    
+    rectangle.x = is_center ? posX - surface_text->w/2 : posX;
     rectangle.y = posY;
-    rectangle.h = 40;
-    rectangle.w = 20*length_text;
+    rectangle.w = surface_text->w;
+    rectangle.h = surface_text->h;
 
     if (SDL_RenderCopy(renderer, texture_txt, NULL, &rectangle) != 0) {
         SDL_Log("ERREUR : texte : RenderCopy > %s\n", SDL_GetError());

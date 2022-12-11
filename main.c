@@ -11,19 +11,19 @@ void KeyPressed(SDL_KeyboardEvent event) {
     SDL_KeyCode touche = event.keysym.sym;
 
     switch (touche) {
-        case SDLK_KP_PLUS:
-            if (attempt_count < TRIES_MAX)
-                attempt_count++;
-            printf("attempt_count hangman : %d\n", attempt_count);
-            break;
-        case SDLK_KP_MINUS:
-            if (attempt_count > 0)
-                attempt_count--;
-            printf("attempt_count hangman : %d\n", attempt_count);
-            break;
         case SDLK_ESCAPE:
             freeAndTerminate();
             break;
+        case SDLK_KP_ENTER:
+        case SDLK_RETURN:
+            if (game_status == ASK_PSEUDO && pseudo.char_length >= 3) {
+                game_status = GAME;
+            }
+            break;
+        case SDLK_BACKSPACE:
+            if (game_status == ASK_PSEUDO) {
+                removeAtIndex(&pseudo, pseudo.char_length - 1);
+            }
         default:
             break;
     }
@@ -31,7 +31,20 @@ void KeyPressed(SDL_KeyboardEvent event) {
     if (touche >= SDLK_a && touche <= SDLK_z) {
         int num = touche - SDLK_a;
         char letter = 'a' + num;
-        DisableButton(letter);
+        int modifier_key = event.keysym.mod;
+        
+        if ((modifier_key & KMOD_LSHIFT || modifier_key & KMOD_RSHIFT) || (modifier_key & KMOD_CAPS)) {
+            letter -= 32;
+        }
+
+        if (game_status == ASK_PSEUDO) {
+            if (pseudo.char_length < PSEUDO_LENGTH_MAX)
+                append(&pseudo, letter);
+        }
+
+        if (game_status == GAME) {
+            DisableButton(letter);
+        }
     }
 
 }
@@ -52,8 +65,6 @@ int main(int argc, char *argv[]) {
     
     init_buttons();
     init_window();
-
-    initialise_game();
 
     while(programLaunched) {
         SDL_Event event;
@@ -77,6 +88,9 @@ int main(int argc, char *argv[]) {
             }
         }
 
+        if (game_result != NONE) {
+            game_status = RESULT;
+        }
         drawGame();
     }
     freeAndTerminate();
