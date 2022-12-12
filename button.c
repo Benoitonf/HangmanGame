@@ -243,7 +243,7 @@ void Check_Button_Click(int mouse_x, int mouse_y) {
                     scoreboard_lock = false;
                 }
             } else if (scoreboard[3].mouse_over) {  // Bouton page suivante
-                if (scoreboard_page < ((scoreboard_file.length / 10))) {
+                if (scoreboard_page < ((scoreboard_file.length / 10) + (scoreboard_file.length % 10 != 0))) {
                     scoreboard_page++;
                     scoreboard_lock = false;
                 }

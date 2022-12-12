@@ -231,7 +231,7 @@ void initialise_game() {
  * @param result 
 */
 void SetResultGame(Result_t result) {
-    if (game_result == NONE)
+    if (result == NONE)
         return;
     
     game_result = result;
