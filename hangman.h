@@ -13,7 +13,6 @@
 #define TRIES_MAX 8                             // Nombre d'essai max
 #define PATH_WORDS_FILE "words.txt"             // Chemin du fichier qui contient les mots
 #define PATH_SCOREBOARD_FILE "scoreboard.txt"   // Chemin du fichier qui contient les résultats
-#define SCOREBOARD_LENGTH 10                    // Nombre de ligne à afficher dans le tableau des scores
 #define PSEUDO_LENGTH_MAX 14                    // Taille max du pseudo
 
 typedef enum {

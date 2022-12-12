@@ -5,19 +5,19 @@ Result_t game_result;
 
 string pseudo;
 
-file dico; // File qui contient tous les mots possible à faire deviner
-string word; // String qui a le mot actuel à deviner
-int  attempt_count; // Compteur du nombre de mauvais lettre
-string guessed; // String qui contient les lettres déjà trouvées
-int  remaining_letters; // Compteur du nombre de lettre qui reste à trouver dans le mot
-string letters_guessed; // string qui contient toutes les lettres déjà utilisées
+file dico;                  // File qui contient tous les mots possible à faire deviner
+string word;                // String qui a le mot actuel à deviner
+int  attempt_count;         // Compteur du nombre de mauvaise lettre
+string guessed;             // String qui contient les lettres déjà trouvées
+int  remaining_letters;     // Compteur du nombre de lettre qui reste à trouver dans le mot
+string letters_guessed;     // String qui contient toutes les lettres déjà utilisées
 
-char *hangman_sprite;
-file scoreboard_file;
-int scoreboard_page = 1;
+char *hangman_sprite;       // Chaîne de caractère qui contient le chemin du sprite du pendu
+file scoreboard_file;       // File qui contient le scoreboard
+int scoreboard_page = 1;    // Numéro de la page du scoreboard à afficher
 
 /**
- * Mets les lignes de texte du fichier dans la structure file
+ * Mets les lignes du fichier dans la structure file
  * @param path Le chemin du fichier
  * @param file La structure file
 */
@@ -51,6 +51,7 @@ int add_scoreboard(char *pseudo, int score) {
         printf("Impossible d'écrire\n");
         return -1;
     }
+    free_string(&tmp);
 }
 
 /**
@@ -85,7 +86,7 @@ int getScore(char *line) {
 }
 
 /**
- * Tri le fichier src de manière croissante en fonction du score
+ * Tri par séléction le fichier src de manière croissante en fonction du score
  * @param src Fichier qui contient les scores
 */
 void Sort_by_score(file *src) {
@@ -110,8 +111,6 @@ void Sort_by_score(file *src) {
 
 // End fonction scoreboard
 
-// Fonction Mot à chercher
-
 /**
  * Initialise le mot à trouver aléatoirement parmis les mots qui sont dans le fichier
 */
@@ -123,12 +122,8 @@ void init_word() {
     remaining_letters = word.char_length;
 }
 
-// End Fonction Mot à chercher
-
-// Fonction Hangman
-
 /**
- * Ajoute une tentative et en fonction du nombre de tentative ajoute une partie du corps au pendu
+ * Ajoute une tentative et en fonction du nombre de tentative change le sprite du pendu
 */
 void add_attempt() {
     if (attempt_count >= TRIES_MAX)
@@ -164,12 +159,10 @@ void add_attempt() {
     }
 }
 
-// End Fonction Hangman
-
 // Guessing Fonction
 
 /**
- * Initialise le mot avec les lettres trouvées
+ * Initialise le mot trouvé par le joueur avec des tirets
 */
 void init_guessed() {
     for(int i = 0; i < word.char_length; i++) {
@@ -178,7 +171,7 @@ void init_guessed() {
 }
 
 /**
- * Regarde si la lettre est dans le mot à trouver et retourne 1 si c'est dedans
+ * Regarde si la lettre est dans le mot à trouver et retourne 1 si elle est dedans
  * @param c caractère à tester
 */
 int is_letter_in_word(char c) {
@@ -207,6 +200,7 @@ void add_guessed_letter(char c) {
         add_attempt();
     }
 
+    // S'il n'y a plus de lettre à deviner alors c'est gagné
     if (remaining_letters == 0) {
         SetResultGame(WIN);
     }
@@ -215,7 +209,7 @@ void add_guessed_letter(char c) {
 // End guesing Fonction
 
 /**
- * Initialise les différentes variables du jeu, demande le pseudo et choisi le mot à deviner
+ * Initialise les différentes variables du jeu et choisi le mot à deviner
 */
 void initialise_game() {
     // Initialise les chaines de caractère
@@ -224,16 +218,24 @@ void initialise_game() {
     init_string(&word);
     init_string(&letters_guessed);
 
-    init_word(); // Choisi un mot aléatoirement
-    init_guessed(); // Initialise le mot trouvé avec des underscores
+    init_word();            // Choisi un mot aléatoirement
+    init_guessed();         // Initialise le mot trouvé avec des underscores
 
-    attempt_count = 0; // Initialise le nombre d'essai actuel à 0
+    attempt_count = 0;      // Initialise le nombre d'essai actuel à 0
 
-    game_result = NONE;
+    game_result = NONE;     // Initialise le résultat de la partie à NONE
 }
 
+/**
+ * Change la variable du résultat de la partie & ajoute le score au fichier
+ * @param result 
+*/
 void SetResultGame(Result_t result) {
+    if (game_result == NONE)
+        return;
+    
     game_result = result;
     add_scoreboard(pseudo.str, attempt_count);
     scoreboard_lock = false;
+    game_status = RESULT;
 }

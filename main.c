@@ -7,6 +7,10 @@
 #include "hangman.h"
 #include "button.h"
 
+/**
+ * Fonction qui gère les touches appuyées sur le clavier
+ * @param event evenement touche du clavier
+*/
 void KeyPressed(SDL_KeyboardEvent event) {
     SDL_KeyCode touche = event.keysym.sym;
 
@@ -31,10 +35,10 @@ void KeyPressed(SDL_KeyboardEvent event) {
     if (touche >= SDLK_a && touche <= SDLK_z) {
         int num = touche - SDLK_a;
         char letter = 'a' + num;
-        int modifier_key = event.keysym.mod;
+        int modifier_key = event.keysym.mod;    // Récupère les touches de combinaisons (Ctrl, Shift, CapsLock, VerrNum etc)
         
-        if ((modifier_key & KMOD_LSHIFT || modifier_key & KMOD_RSHIFT) || (modifier_key & KMOD_CAPS)) {
-            letter -= 32;
+        if (game_status == ASK_PSEUDO && (modifier_key & KMOD_LSHIFT || modifier_key & KMOD_RSHIFT) || (modifier_key & KMOD_CAPS)) {
+            letter -= 32;   // Passe la lettre en majuscule
         }
 
         if (game_status == ASK_PSEUDO) {
@@ -70,28 +74,23 @@ int main(int argc, char *argv[]) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
-                case SDL_QUIT:
-                    // quand on clique sur fermer la fénêtre en haut à droite
+                case SDL_QUIT:  // quand on clique sur fermer la fénêtre en haut à droite
                     programLaunched = false;
                     break;
-                case SDL_MOUSEBUTTONUP:
+                case SDL_MOUSEBUTTONUP: // quand on clique avec la souris
                     if (event.button.button == SDL_BUTTON_LEFT) {
                         Check_Button_Click(event.button.x, event.button.y);
                     }
                     break;
-                case SDL_MOUSEMOTION:
+                case SDL_MOUSEMOTION:   // quand on bouge la souris
                     Mouse_over_buttons(event.motion.x, event.motion.y);
                     break;
-                case SDL_KEYDOWN:
+                case SDL_KEYDOWN:   // quand on appuie sur une touche du clavier
                     KeyPressed(event.key);
                     break;
             }
         }
-
-        if (game_result != NONE) {
-            game_status = RESULT;
-        }
-        drawGame();
+        draw_window();
     }
     freeAndTerminate();
 

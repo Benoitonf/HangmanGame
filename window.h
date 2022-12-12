@@ -12,7 +12,7 @@ extern bool scoreboard_lock;
 
 void init_window();
 
-void drawGame();
+void draw_window();
 
 void gameloop();
 

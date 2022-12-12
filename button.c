@@ -8,6 +8,9 @@ Button menu[3];
 Button result[2];
 Button scoreboard[4];
 
+/**
+ * Initialise les boutons de la fenêtre scoreboard
+*/
 void init_scoreboard_buttons() {
     Button menu = {.enable = true, .width = 190, .height = 66, .pos = {.x = 200, .y = 640},
         .sprite = "assets/Scoreboard/menu.png", .sprite_mouseover = "assets/Scoreboard/menu_over.png"};
@@ -24,6 +27,9 @@ void init_scoreboard_buttons() {
     scoreboard[3] = next;
 }
 
+/**
+ * Initialise les boutons de la fenêtre résultat
+*/
 void init_result_buttons() {
     Button menu = {.enable = true, .width = 190, .height = 66, .pos = {.x = 200, .y = 640},
         .sprite = "assets/Result/menu.png", .sprite_mouseover = "assets/Result/menu_over.png"};
@@ -34,6 +40,9 @@ void init_result_buttons() {
     result[1] = exit;
 }
 
+/**
+ * Initialise les boutons de la fenêtre menu principal
+*/
 void init_menu_buttons() {
     Button new_game = {.enable = true, .width = 369, .height = 84, .pos = {.x = 306, .y = 310},
         .sprite = "assets/Menu/newgame.png", .sprite_mouseover = "assets/Menu/newgame_over.png"};
@@ -47,6 +56,9 @@ void init_menu_buttons() {
     menu[2] = exit;
 }
 
+/**
+ * Initialise les boutons de la fenêtre de jeu
+*/
 void init_keyboard_buttons() {
     for(int i = 0; i < 26; i++) {
         Button key = {.height = 50, .width = 50, .key_code = 'a' + i, .mouse_over = false, .enable = true};
@@ -65,6 +77,9 @@ void init_keyboard_buttons() {
     }
 }
 
+/**
+ * Initialise tous les boutons
+*/
 void init_buttons() {
     init_menu_buttons();
     init_keyboard_buttons();
@@ -72,6 +87,10 @@ void init_buttons() {
     init_scoreboard_buttons();
 }
 
+/**
+ * Dessine le bouton passé en paramètre
+ * @param key bouton à dessiner 
+*/
 void draw_button(Button key) {
     if (key.mouse_over || !key.enable) {
         sprite(key.pos.x, key.pos.y, key.sprite_mouseover);
@@ -82,7 +101,7 @@ void draw_button(Button key) {
 }
 
 /**
- * Check that the two objects intersect
+ * Regarde si 2 éléments se coupent
  * @param x1
  * @param y1
  * @param w1
@@ -99,51 +118,61 @@ bool Check_Intersection(double x1, double y1, int w1, int h1, double x2, double 
     return false;
 }
 
+/**
+ * Active le mouse_over du bouton si la souris passe dessus
+ * @param key Le bouton a check
+ * @param mouse_x Coordonnée x de la souris
+ * @param mouse_y Coordonnée y de la souris
+*/
+bool Check_mouse_over(Button* key, int mouse_x, int mouse_y) {
+    if (key->enable) {
+        key->mouse_over = Check_Intersection(key->pos.x, key->pos.y, key->width, key->height, mouse_x, mouse_y);
+    }
+    return key->mouse_over;
+}
+
+/**
+ * Check le mouse_over des boutons quand la souris passe dessus en fonction de l'état du jeu
+ * @param mouse_x Coordonnée x de la souris
+ * @param mouse_y Coordonnée y de la souris
+*/
 void Mouse_over_buttons(int mouse_x, int mouse_y) {
     int i = 0;
     bool key_find = false;
     switch(game_status) {
-        case MENU_SELECT:
+        case MENU_SELECT:       // Menu principal
             while(!key_find && i < 3) {
-                if (menu[i].enable) {
-                    menu[i].mouse_over = Check_Intersection(menu[i].pos.x, menu[i].pos.y, menu[i].width, menu[i].height, mouse_x, mouse_y);
-                    key_find = menu[i].mouse_over;
-                }
+                key_find = Check_mouse_over(&menu[i], mouse_x, mouse_y);
                 i++;
             }
             break;
-        case GAME:
+        case GAME:              // Jeu en cours
             while(!key_find && i < 26) {
-                if (keys[i].enable) {
-                    keys[i].mouse_over = Check_Intersection(keys[i].pos.x, keys[i].pos.y, keys[i].width, keys[i].height, mouse_x, mouse_y);
-                    key_find = keys[i].mouse_over;
-                }
+                key_find = Check_mouse_over(&keys[i], mouse_x, mouse_y);
                 i++;
             }
             break;
-        case RESULT:
+        case RESULT:            // Fenêtre de résultat de la partie
             while(!key_find && i < 2) {
-                if (result[i].enable) {
-                    result[i].mouse_over = Check_Intersection(result[i].pos.x, result[i].pos.y, result[i].width, result[i].height, mouse_x, mouse_y);
-                    key_find = result[i].mouse_over;
-                }
+                key_find = Check_mouse_over(&result[i], mouse_x, mouse_y);
                 i++;
             }
             break;
-        case SCOREBOARD:
+        case SCOREBOARD:        // Le scoreboard
             while(!key_find && i < 4) {
-                if (scoreboard[i].enable) {
-                    scoreboard[i].mouse_over = Check_Intersection(scoreboard[i].pos.x, scoreboard[i].pos.y, scoreboard[i].width, scoreboard[i].height, mouse_x, mouse_y);
-                    key_find = scoreboard[i].mouse_over;
-                }
+                key_find = Check_mouse_over(&scoreboard[i], mouse_x, mouse_y);
                 i++;
             }
             break;
     }
 }
 
+/**
+ * Ajoute la lettre cliquée aux lettres utilisées
+ * @param btn Bouton qui contient une lettre de la fenêtre de jeu
+*/
 void Click_Keyboard_Button(Button* btn) {
-    if (!btn->enable)
+    if (game_status != GAME && !btn->enable)
         return;
     
     add_guessed_letter(btn->key_code);
@@ -152,17 +181,22 @@ void Click_Keyboard_Button(Button* btn) {
     btn->mouse_over = false;
 }
 
+/**
+ * Check quand la souris clique si c'est sur un bouton
+ * @param mouse_x Coordonnée x de la souris
+ * @param mouse_y Coordonnée y de la souris
+*/
 void Check_Button_Click(int mouse_x, int mouse_y) {
     switch(game_status) {
         case MENU_SELECT:
-            if (menu[0].mouse_over) {
+            if (menu[0].mouse_over) {           // Bouton nouvelle partie
                 game_status = ASK_PSEUDO;
                 menu[0].mouse_over = false;
 
                 Reset_keyboard_buttons();
                 initialise_game();
             }
-            else if (menu[1].mouse_over) {
+            else if (menu[1].mouse_over) {      // Bouton scoreboard
                 scoreboard_page = 1;
                 scoreboard_lock = false;
                 game_status = SCOREBOARD;
@@ -175,7 +209,7 @@ void Check_Button_Click(int mouse_x, int mouse_y) {
                 init_file(PATH_SCOREBOARD_FILE, &scoreboard_file);
                 Sort_by_score(&scoreboard_file); // Tri le scoreboard
             }
-            else if (menu[2].mouse_over) {
+            else if (menu[2].mouse_over) {      // Bouton quitter
                 freeAndTerminate();
             }
 
@@ -188,27 +222,27 @@ void Check_Button_Click(int mouse_x, int mouse_y) {
             }
             break;
         case RESULT:
-            if (result[0].mouse_over) {
+            if (result[0].mouse_over) {         // Bouton Menu principal
                 game_result = NONE;
                 game_status = MENU_SELECT;
                 result[0].mouse_over = false;
             }
-            else if (result[1].mouse_over) {
+            else if (result[1].mouse_over) {    // Bouton quitter
                 freeAndTerminate();
             }
             break;
         case SCOREBOARD:
-            if (scoreboard[0].mouse_over) {
+            if (scoreboard[0].mouse_over) {     // Bouton Menu principal
                 game_status = MENU_SELECT;
                 result[0].mouse_over = false;
-            } else if (scoreboard[1].mouse_over) {
+            } else if (scoreboard[1].mouse_over) {  // Bouton quitter
                 freeAndTerminate();
-            } else if (scoreboard[2].mouse_over) {
+            } else if (scoreboard[2].mouse_over) {  // Bouton page précédant
                 if (scoreboard_page > 1) {
                     scoreboard_page--;
                     scoreboard_lock = false;
                 }
-            } else if (scoreboard[3].mouse_over) {
+            } else if (scoreboard[3].mouse_over) {  // Bouton page suivante
                 if (scoreboard_page < ((scoreboard_file.length / 10))) {
                     scoreboard_page++;
                     scoreboard_lock = false;
@@ -219,6 +253,10 @@ void Check_Button_Click(int mouse_x, int mouse_y) {
     
 }
 
+/**
+ * Désactive le bouton du clavier jeu en fonction de la lettre donnée en paramètre
+ * @param letter Lettre donnée par le clavier
+*/
 void DisableButton(char letter) {
     if (letter < 'a' || letter > 'z') {
         return;
@@ -227,6 +265,9 @@ void DisableButton(char letter) {
     Click_Keyboard_Button(&keys[letter - 'a']);
 }
 
+/**
+ * Réinitialise les boutons du clavier jeu pour les nouvelles parties
+*/
 void Reset_keyboard_buttons() {
     for(int i = 0; i < 26; i++) {
         keys[i].enable = true;

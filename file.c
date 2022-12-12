@@ -30,13 +30,13 @@ void free_file(file *file) {
 /**
  * Ajoute une ligne qui contient la chaine de caractère str dans file
  * @param file Pointeur du fichier qui va contenir les lignes de texte
- * @param str  La chaine de caractère à inscrire
+ * @param str  La chaine de caractère à inscrire dans file
 */
 void add_line(file *file, struct string_t str) {
     if (file == NULL) {
         return;
     }
-    // Ajout la case mémoire pour la nouvelle ligne
+    // Ajoute la case mémoire pour la nouvelle ligne
     file->length++;
     file->array = realloc(file->array, sizeof(string) * file->length);
 
@@ -86,7 +86,7 @@ int Read_File(char* path, file *file) {
 }
 
 /**
- * Ecrit dans le fichier
+ * Ecrit une chaîne de caractère à la suite dans le fichier
  * @param path Chemin du fichier à créer
  * @param str La chaine de caractère à écrire dans le fichier
 */

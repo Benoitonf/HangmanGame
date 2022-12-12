@@ -1,15 +1,21 @@
 #include "window.h"
 
-bool scoreboard_lock = false;
-scoreboard_t sorted[10];
-int max_line;
+bool scoreboard_lock = false;   // Bloque l'actualisation de la page du scoreboard
+scoreboard_t sorted[10];        // Scoreboard des 10 joueurs de la page actuelle
+int max_line;                   // Nombre de ligne max dans la page actuelle
 
+/**
+ * Initialise la fenêtre du programme
+*/
 void init_window() {
     init(WINDOW_WIDTH, WINDOW_HIGHT);
 
     game_status = MENU_SELECT;
 }
 
+/**
+ * Dessine le menu principal
+*/
 void draw_Menu() {
     sprite(0,0, "assets/Menu/menu.png");
 
@@ -18,6 +24,9 @@ void draw_Menu() {
     }
 }
 
+/**
+ * Dessine la fenêtre demande pseudo
+*/
 void draw_AskPseudo() {
     sprite(0, 0, "assets/Ask_Pseudo.png");
 
@@ -25,6 +34,9 @@ void draw_AskPseudo() {
         write_text(WINDOW_WIDTH/2, 467, pseudo.str, 44, SDL_TRUE);
 }
 
+/**
+ * Dessine la fenêtre de jeu
+*/
 void draw_Game() {
     sprite(0,0, "assets/Game.png");
 
@@ -36,11 +48,13 @@ void draw_Game() {
     }
 
     write_text(20, 10, pseudo.str, 44, SDL_FALSE);
-    write_text(20, 100, word.str, 44, SDL_FALSE);
 
     write_text(490, 407, guessed.str, 44, SDL_TRUE);
 }
 
+/**
+ * Dessine la fenêtre du résultat
+*/
 void draw_Result() {
     sprite(0, 0, "assets/Result/Result.png");
     if (game_result == WIN) {
@@ -64,6 +78,9 @@ void draw_Result() {
     }
 }
 
+/**
+ * Récupère les informations du scoreboard pour afficher la bonne page
+*/
 void scoreboard_parsing() {
     string num_place, name_score;
     init_string(&num_place);
@@ -106,6 +123,9 @@ void scoreboard_parsing() {
     free_string(&name_score);
 }
 
+/**
+ * Dessine la fenêtre du scoreboard
+*/
 void draw_Scoreboard() {
     sprite(0, 0, "assets/Scoreboard/scoreboard.png");
 
@@ -117,26 +137,30 @@ void draw_Scoreboard() {
         return;
     }
 
-    if (!scoreboard_lock) {
+    if (!scoreboard_lock) { // Ne change pas la page à afficher si c'est toujours la même page
         scoreboard_lock = true;
         scoreboard_parsing();
     }
 
     for(int i = (scoreboard_page - 1) * 10; i < max_line; i++) {
-        int x_place = 108, x_nameScore = 163;
+        int x_place, x_nameScore;
         int y = 139 + (84*(i % 5));
         
-        if (i % 10 > 4) { //Deuxième colonne
+        if (i % 10 > 4) { // Deuxième colonne
             x_nameScore = 598;
-            if (i < 9) {
+            if (i < 9) {    // Si le numéro de la place à 1 caractère
                 x_place = 545;
             }
-            else {
+            else {          // Si le numéro de la place à 2 caractères
                 x_place = 536;
             }
         } 
-        else {
-            if (i > 9) {
+        else {           // Première colonne
+            x_nameScore = 163;
+            if (i < 9) {    // Si le numéro de la place à 1 caractère
+                x_place = 108;
+            }
+            else {          // Si le numéro de la place à 2 caractères
                 x_place = 99;
             }
         }
@@ -147,7 +171,7 @@ void draw_Scoreboard() {
         write_text(x_nameScore, y, tmp.nameScore.str, 30, SDL_FALSE);
     }
 
-
+    // Affiche le numéro de page actuel et le nombre de page max
     string num_page;
     init_string(&num_page);
     append(&num_page, scoreboard_page + '0');
@@ -158,7 +182,10 @@ void draw_Scoreboard() {
     free_string(&num_page);
 }
 
-void drawGame() {
+/**
+ * Dessine le jeu en fonction de son état
+*/
+void draw_window() {
     clear();
 
     switch(game_status) {

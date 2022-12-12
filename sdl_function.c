@@ -63,27 +63,27 @@ void freeAndTerminate() {
     exit(EXIT_SUCCESS);
 }
 
+/** @brief actualise le renderer (i.e affiche ce qu'on a dessiné / fait dessus)
+ */
 void actualize() {
-    /** @brief actualise le renderer (i.e affiche ce qu'on a dessiné / fait dessus)
-     */
     SDL_RenderPresent(renderer);
 }
 
+/** @brief réinitialise le fenêtre et reset la couleur
+ *         (i.e supprime ce qu'on a dessiné dessus pour avoir une fenêtre noire)
+ */
 void clear() {
-    /** @brief réinitialise le fenêtre et reset la couleur
-     *         (i.e supprime ce qu'on a dessiné dessus pour avoir une fenêtre noire)
-     */
     changeColor(0, 0, 0);
     SDL_RenderClear(renderer);
     changeColor(255, 255, 255);
 }
 
+/** @brief change la couleur avec laquelle on dessine sur le renderer en celle du code RGB
+ *  @param r Rouge dans le code RGB de la couleur choisi, entre 0 et 255
+ *  @param g Vert dans le code RGB de la couleur choisi, entre 0 et 255
+ *  @param b Bleu dans le code RGB de la couleur choisi, entre 0 et 255
+ */
 void changeColor(int r, int g, int b) {
-    /** @brief change la couleur avec laquelle on dessine sur le renderer en celle du code RGB
-     *  @param r Rouge dans le code RGB de la couleur choisi, entre 0 et 255
-     *  @param g Vert dans le code RGB de la couleur choisi, entre 0 et 255
-     *  @param b Bleu dans le code RGB de la couleur choisi, entre 0 et 255
-     */
     if (SDL_SetRenderDrawColor(renderer, r, g, b, SDL_ALPHA_OPAQUE)) {
         SDL_Log("ERREUR : changement de couleur > %s\nParametres passes %d , %d, %d\n",SDL_GetError(), r, g, b);
         freeAndTerminate();
@@ -91,13 +91,13 @@ void changeColor(int r, int g, int b) {
 }
 
 
+/** @brief dessine un carré
+ *  @param posX position sur l'axe horizontale du coin supérieur gauche du carré
+ *  @param posY position sur l'axe verticale du coin supérieur gauche du carré
+ *  @param longueur longeur du coté du carré
+ */
 void drawSquare(int posX, int posY, int longueur)
 {
-    /** @brief dessine un carré
-     *  @param posX position sur l'axe horizontale du coin supérieur gauche du carré
-     *  @param posY position sur l'axe verticale du coin supérieur gauche du carré
-     *  @param longueur longeur du coté du carré
-     */
     SDL_Rect rectangle;
     rectangle.x = posX;
     rectangle.y = posY;
@@ -111,12 +111,12 @@ void drawSquare(int posX, int posY, int longueur)
     }
 }
 
+/** @brief affiche un image .bmp sur le renderer
+ *  @param posX position sur l'axe horizontale du coin supérieur gauche de l'image
+ *  @param posY position sur l'axe verticale du coin supérieur gauche de l'image
+ *  @param imgBMPSrc le chemin vers l'image que l'on veut afficher
+ */
 void sprite(int posX, int posY, char *imgBMPSrc) {
-    /** @brief affiche un image .bmp sur le renderer
-     *  @param posX position sur l'axe horizontale du coin supérieur gauche de l'image
-     *  @param posY position sur l'axe verticale du coin supérieur gauche de l'image
-     *  @param imgBMPSrc le chemin vers l'image que l'on veut afficher
-     */
     SDL_Texture *textureImg = NULL;
     SDL_Surface *surfaceImg = NULL;
     if (!(surfaceImg = IMG_Load(imgBMPSrc))) {
@@ -147,6 +147,14 @@ void sprite(int posX, int posY, char *imgBMPSrc) {
     freeTexture(textureImg);
 }
 
+/**
+ * Affiche du texte sur la fenêtre
+ * @param posX position sur l'axe horizontale du coin supérieur gauche du texte
+ * @param posY position sur l'axe verticale du coin supérieur gauche du texte
+ * @param text text à afficher
+ * @param ptsize taille de la police
+ * @param is_center si posX doit être le centre de la zone de texte
+*/
 void write_text(int posX, int posY, char *text, int ptsize, SDL_bool is_center) {
     SDL_Color color = {255,255,255};
 
