@@ -124,7 +124,7 @@ bool Check_Intersection(double x1, double y1, int w1, int h1, double x2, double 
  * @param mouse_x Coordonnée x de la souris
  * @param mouse_y Coordonnée y de la souris
 */
-bool Check_mouse_over(Button* key, int mouse_x, int mouse_y) {
+bool Check_mouse_over(Button *key, int mouse_x, int mouse_y) {
     if (key->enable) {
         key->mouse_over = Check_Intersection(key->pos.x, key->pos.y, key->width, key->height, mouse_x, mouse_y);
     }
@@ -172,7 +172,7 @@ void Mouse_over_buttons(int mouse_x, int mouse_y) {
  * @param btn Bouton qui contient une lettre de la fenêtre de jeu
 */
 void Click_Keyboard_Button(Button* btn) {
-    if (game_status != GAME && !btn->enable)
+    if (game_status != GAME || !btn->enable)
         return;
     
     add_guessed_letter(btn->key_code);
@@ -186,7 +186,7 @@ void Click_Keyboard_Button(Button* btn) {
  * @param mouse_x Coordonnée x de la souris
  * @param mouse_y Coordonnée y de la souris
 */
-void Check_Button_Click(int mouse_x, int mouse_y) {
+void Check_Button_Click() {
     switch(game_status) {
         case MENU_SELECT:
             if (menu[0].mouse_over) {           // Bouton nouvelle partie

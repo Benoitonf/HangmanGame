@@ -29,7 +29,7 @@ void draw_button(Button key);
 
 void Mouse_over_buttons(int mouse_x, int mouse_y);
 
-void Check_Button_Click(int mouse_x, int mouse_y);
+void Check_Button_Click();
 
 void DisableButton(char letter);
 
